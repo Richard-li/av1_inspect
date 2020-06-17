@@ -142,5 +142,5 @@ RUN \
         -DAOM_EXTRA_CXX_FLAGS="-std=gnu++11" \
         -DCMAKE_TOOLCHAIN_FILE=${EMSDK_DIR}/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake && \
 	make inspect && \
-    #cp ./examples/*
+    cp ./examples/* /home
 
