@@ -1,5 +1,8 @@
 FROM ubuntu:18.04
 
+ENV \ 
+	GPG_SERVERS="ha.pool.sks-keyservers.net hkp://p80.pool.sks-keyservers.net:80 keyserver.ubuntu.com hkp://keyserver.ubuntu.com:80 pgp.mit.edu"
+
 # install base build dependencies and useful packages
 RUN \
 	echo "deb http://archive.ubuntu.com/ubuntu/ bionic main restricted universe multiverse"           >/etc/apt/sources.list && \
