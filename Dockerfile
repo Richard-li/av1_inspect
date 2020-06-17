@@ -1,0 +1,63 @@
+FROM ubuntu:18.04
+
+# install base build dependencies and useful packages
+RUN \
+	echo "deb http://archive.ubuntu.com/ubuntu/ bionic main restricted universe multiverse"           >/etc/apt/sources.list && \
+	echo "deb http://security.ubuntu.com/ubuntu bionic-security main restricted universe multiverse" >>/etc/apt/sources.list && \
+	echo "deb http://archive.ubuntu.com/ubuntu/ bionic-updates main restricted universe multiverse"  >>/etc/apt/sources.list && \
+	apt-get update && \
+	apt-get install -y --no-install-recommends \
+		#autoconf \
+		#automake \
+		#build-essential \
+		cmake \
+		#cmake-extras \
+		#openjdk-8-jdk-headless \
+		#python2.7 \
+		#vim \
+		#wget \
+		#yasm \
+		&& \
+	apt-get clean && \
+	rm -rf /var/lib/apt/lists
+
+# install emscripten
+ENV \
+	EMSDK_DIR=/opt/emsdk
+
+RUN \
+	EMSDK_VERSION=sdk-1.39.16-64bit && \
+	git clone https://github.com/emscripten-core/emsdk.git ${EMSDK_DIR} && \
+	cd /opt/emsdk && \
+	./emsdk install ${EMSDK_VERSION} && \
+	./emsdk activate ${EMSDK_VERSION}
+
+# fetch LibAom source code
+ENV \
+    LIBAOM_DIR=/opt/libaom
+
+RUN \
+    git clone https://github.com/edmond-zhu/aom.git ${LIBAOM_DIR}
+
+# EMSDK Compilation
+RUN \
+    cd /tmp && \
+    mkdir buildAnalyzer && \
+    cd buildAnalyzer && \
+    cmake /opt/libaom \
+        -DENABLE_CCACHE=1 \
+        -DAOM_TARGET_CPU=generic \
+        -DENABLE_DOCS=0 \
+        -DENABLE_TESTS=0 \
+        -DCONFIG_ACCOUNTING=1 \
+        -DCONFIG_INSPECTION=1 \
+        -DCONFIG_MULTITHREAD=0 \
+        -DCONFIG_RUNTIME_CPU_DETECT=0 \
+        -DCONFIG_WEBM_IO=0 \
+		-DCMAKE_BUILD_TYPE=release \
+        -DAOM_EXTRA_C_FLAGS="-std=gnu99" \
+        -DAOM_EXTRA_CXX_FLAGS="-std=gnu++11" \
+        -DCMAKE_TOOLCHAIN_FILE=${EMSDK_DIR}/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake && \
+	make inspect && \
+    #cp ./examples/*
+
