@@ -31,6 +31,9 @@ ENV \
 
 RUN \
 	EMSDK_VERSION=sdk-1.39.16-64bit && \
+	for server in $(shuf -e ${GPG_SERVERS}) ; do \
+		http_proxy= gpg --keyserver "$server" --recv-keys 0527A9B7 && break || : ; \
+	done && \
 	git clone https://github.com/emscripten-core/emsdk.git ${EMSDK_DIR} && \
 	cd /opt/emsdk && \
 	./emsdk install ${EMSDK_VERSION} && \
