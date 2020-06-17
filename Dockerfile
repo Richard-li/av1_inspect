@@ -15,6 +15,8 @@ RUN \
 		#build-essential \
 		cmake \
 		git-core \
+		gpg \
+		gpg-agent \
 		#cmake-extras \
 		#openjdk-8-jdk-headless \
 		#python2.7 \
