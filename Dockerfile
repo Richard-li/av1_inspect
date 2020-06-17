@@ -11,6 +11,7 @@ RUN \
 		#automake \
 		#build-essential \
 		cmake \
+		git-core \
 		#cmake-extras \
 		#openjdk-8-jdk-headless \
 		#python2.7 \
